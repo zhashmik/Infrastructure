@@ -33,12 +33,41 @@ resource "aws_instance" "frontend" {
      }
 }
 
-output "database_public_ip" {
- value=aws_instance.database.public_ip
+resource "aws_eip" "database_eip" {
+  instance = aws_instance.database.id
+  vpc      = true
+  tags = {
+    Name = "Database-EIP"
+  }
 }
-output "frontend_public_ip" {
- value=aws_instance.frontend.public_ip
+
+resource "aws_eip" "backend_eip" {
+  instance = aws_instance.backend.id
+  vpc      = true
+  tags = {
+    Name = "Backend-EIP"
+  }
 }
-output "backend_public_ip" {
- value=aws_instance.backend.public_ip
+
+resource "aws_eip" "frontend_eip" {
+  instance = aws_instance.frontend.id
+  vpc      = true
+  tags = {
+    Name = "Frontend-EIP"
+  }
 }
+
+
+
+output "database_eip" {
+  value = aws_eip.database_eip.public_ip
+}
+
+output "backend_eip" {
+  value = aws_eip.backend_eip.public_ip
+}
+
+output "frontend_eip" {
+  value = aws_eip.frontend_eip.public_ip
+}
+
